@@ -1,8 +1,9 @@
 # CodecStepResponse
 
+## Codecs
 Description of codec configurations used to characterise codec step response
 
-## x264
+### x264
 ```
   x264_param_default_preset(&params, "ultrafast", "zerolatency");
 
@@ -42,7 +43,7 @@ Description of codec configurations used to characterise codec step response
   }
 ```
 
-## openH264
+### openH264
 ```
   ISVCEncoder* m_pCodec;
   ...
@@ -79,7 +80,7 @@ Description of codec configurations used to characterise codec step response
   m_pCodec->SetOption (ENCODER_OPTION_DATAFORMAT, &videoFormat);
 ```
 
-## VPP
+### VPP
 
 ```
   ICodecv2* pCodec;
@@ -113,18 +114,35 @@ Description of codec configurations used to characterise codec step response
   pCodec->SetParameter("autoipicture", "1");
   pCodec->SetParameter("ipicturefraction", "0");
 ```
-### VPP-Cbr
+#### VPP-Cbr
 ```
   pCodec->SetParameter("mode of operation", "1");
 ```
-### VPP-Pow
+#### VPP-Pow
 ```
   pCodec->SetParameter("mode of operation", "2");
   pCodec->SetParameter("rate control model type", "1");
 ```
-### VPP-Log
+#### VPP-Log
 ```
   pCodec->SetParameter("mode of operation", "2");
   pCodec->SetParameter("rate control model type", "2");
 ```
+## Sequences
+
+| Sequence | width | height | fps | frames | 
+| foreman_cif.yuv | 352 | 288 | 30 | 300 |  
+| mobile_cif.yuv | 352 | 288 | 30 | 300 |
+| soccer_cif.yuv | 352 | 288 | 30 | 300 |
+| akiyo_cif.yuv | 352 |  288 | 30 | 300 |
+| KristenAndSara_352x288_30.yuv |  352 |  288 |  30 |  300 |
+| Johnny_352x288_30.yuv | 352 |  288 |  30 |  300 |
+| FourPeople_352x288_30.yuv | 352 |  288 |  30 |  300 |
+| mobcal_ter_352x288_25.yuv | 352 |  288 |  25 |  250 |
+| parkrun_ter_352x288_25.yuv | 352 |  288 |  25 |  250 |
+| KristenAndSara_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
+| Johnny_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
+| FourPeople_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
+| parkrun_ter_1280x720_25.yuv | 1280 |  720 |  25 |  250 |
+| mobcal_ter_1280x720_25.yuv | 1280 |  720 |  25 |  250 |
 
