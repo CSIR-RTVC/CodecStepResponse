@@ -130,19 +130,20 @@ Description of codec configurations used to characterise codec step response
 ```
 ## Sequences
 
-| Sequence | width | height | fps | frames | 
-| foreman_cif.yuv | 352 | 288 | 30 | 300 |  
-| mobile_cif.yuv | 352 | 288 | 30 | 300 |
-| soccer_cif.yuv | 352 | 288 | 30 | 300 |
-| akiyo_cif.yuv | 352 |  288 | 30 | 300 |
-| KristenAndSara_352x288_30.yuv |  352 |  288 |  30 |  300 |
-| Johnny_352x288_30.yuv | 352 |  288 |  30 |  300 |
-| FourPeople_352x288_30.yuv | 352 |  288 |  30 |  300 |
-| mobcal_ter_352x288_25.yuv | 352 |  288 |  25 |  250 |
-| parkrun_ter_352x288_25.yuv | 352 |  288 |  25 |  250 |
-| KristenAndSara_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
-| Johnny_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
-| FourPeople_1280x720_30.yuv | 1280 |  720 |  30 |  300 |
-| parkrun_ter_1280x720_25.yuv | 1280 |  720 |  25 |  250 |
-| mobcal_ter_1280x720_25.yuv | 1280 |  720 |  25 |  250 |
+| Sequence                       | width | height | fps | frames | 
+|--------------------------------|-------|--------|-----|--------|
+| foreman_cif.yuv                | 352   |    288 |  30 |  300   |  
+| mobile_cif.yuv                 | 352   |    288 |  30 |  300   |
+| soccer_cif.yuv                 | 352   |    288 |  30 |  300   |
+| akiyo_cif.yuv                  | 352   |    288 |  30 |  300   |
+| KristenAndSara_352x288_30.yuv  | 352   |    288 |  30 |  300   |
+| Johnny_352x288_30.yuv          | 352   |    288 |  30 |  300   |
+| FourPeople_352x288_30.yuv      | 352   |    288 |  30 |  300   |
+| mobcal_ter_352x288_25.yuv      | 352   |    288 |  25 |  250   |
+| parkrun_ter_352x288_25.yuv     | 352   |    288 |  25 |  250   |
+| KristenAndSara_1280x720_30.yuv | 1280  |    720 |  30 |  300   |
+| Johnny_1280x720_30.yuv         | 1280  |    720 |  30 |  300   |
+| FourPeople_1280x720_30.yuv     | 1280  |    720 |  30 |  300   |
+| parkrun_ter_1280x720_25.yuv    | 1280  |    720 |  25 |  250   |
+| mobcal_ter_1280x720_25.yuv     | 1280  |    720 |  25 |  250   |
 
