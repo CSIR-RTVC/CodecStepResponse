@@ -83,7 +83,7 @@ THIS IS NOT A GRANT OF PATENT RIGHTS - SEE THE ITU-T PATENT POLICY.
 */
 
 // 0.1 Derivate work that adds looping of YUV file capabilties
-#define GENERATE_PSNR_VERSION_STRING 0.1 
+#define GENERATE_PSNR_VERSION_STRING "0.1"
 
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE 1
