@@ -186,7 +186,7 @@ ${CodecStepResponse_SOURCE_DIR}/../include
 ADD_SUBDIRECTORY( apps ) 
 #ADD_SUBDIRECTORY( lib ) 
 ADD_SUBDIRECTORY( libs )
-ADD_SUBDIRECTORY( test )
+#ADD_SUBDIRECTORY( test )
 ADD_SUBDIRECTORY( tools )
 ADD_SUBDIRECTORY( ../externals/rtp++/src projects )
 
