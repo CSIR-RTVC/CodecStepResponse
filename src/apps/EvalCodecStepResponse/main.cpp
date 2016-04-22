@@ -8,11 +8,38 @@
 using namespace rtp_plus_plus;
 using namespace boost::program_options;
 
-void onYuvInput(const std::string& sYuvFile)
+void validateYuvInput(const std::string& sYuvFile)
 {
   if (!boost::filesystem::exists(sYuvFile))
   {
     LOG(ERROR) << "YUV input file " << sYuvFile << " does not exist";
+    throw validation_error(validation_error::invalid_option_value);
+  }
+}
+
+void validateWidth(const uint32_t uiWidth)
+{
+  if (uiWidth == 0)
+  {
+    LOG(ERROR) << "Invalid width: " << uiWidth;
+    throw validation_error(validation_error::invalid_option_value);
+  }
+}
+
+void validateHeight(const uint32_t uiHeight)
+{
+  if (uiHeight == 0)
+  {
+    LOG(ERROR) << "Invalid width: " << uiHeight;
+    throw validation_error(validation_error::invalid_option_value);
+  }
+}
+
+void validateFps(const double dFps)
+{
+  if (dFps == 0.0)
+  {
+    LOG(ERROR) << "Invalid FPS: " << dFps;
     throw validation_error(validation_error::invalid_option_value);
   }
 }
@@ -28,15 +55,24 @@ int main(int argc, char** argv)
   try
   {
     std::string sYuvFile;
+    uint32_t uiWidth = 0;
+    uint32_t uiHeight = 0;
+    double dFps = 0.0;
+
     options_description cmdline_options;
     cmdline_options.add_options()
-        ("help,h", "produce help message")
-        ("input,i", value<std::string>(&sYuvFile)->required()->notifier(onYuvInput), "YUV input file");
+        ("help,?", "produce help message")
+        ("input,i", value<std::string>(&sYuvFile)->required()->notifier(validateYuvInput), "YUV input file")
+        ("width,w", value<uint32_t>(&uiWidth)->required()->notifier(validateWidth), "Width")
+        ("height,h", value<uint32_t>(&uiHeight)->required()->notifier(validateHeight), "Height")
+        ("fps,f", value<double>(&dFps)->required()->notifier(validateFps), "FPS")
+        ;
 
     variables_map vm;
     store(command_line_parser(argc, argv).
               options(cmdline_options).run(), vm);
-    notify(vm);
+
+    // deal with help option before mandatory checks
     if (vm.count("help"))
     {
       std::ostringstream ostr;
@@ -45,8 +81,8 @@ int main(int argc, char** argv)
       return 1;
     }
 
-    const uint32_t uiWidth = 352;
-    const uint32_t uiHeight = 288;
+    notify(vm);
+
     media::YuvMediaSource yuvMediaSource(sYuvFile, uiWidth, uiHeight, false, 0);
 
     int iCount = 0;
