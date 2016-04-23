@@ -39,7 +39,15 @@ stdafx.cpp
 )
 SET(EXPERIMENTAL_SRCS
 )
+SET(MEDIA_H264_SRCS
+media/h264/H264AnnexBStreamParser.cpp
+)
+SET(MEDIA_H265_SRCS
+media/h265/H265AnnexBStreamParser.cpp
+)
 SET(MEDIA_SRCS
+media/MediaSink.cpp
+media/NalUnitMediaSource.cpp
 media/YuvMediaSource.cpp
 )
 SET(UTIL_SRCS
@@ -52,22 +60,42 @@ stdafx.h
 SET(EXPERIMENTAL_HEADERS
 ../../include/rtp++/experimental/INetworkCodecCooperation.h
 )
+SET(MEDIA_H264_HEADERS
+../../include/rtp++/media/h264/H264AnnexBStreamParser.h
+../../include/rtp++/media/h264/H264AnnexBStreamWriter.h
+../../include/rtp++/media/h264/H264FormatDescription.h
+../../include/rtp++/media/h264/H264NalUnitTypes.h
+../../include/rtp++/media/h264/SvcExtensionHeader.h
+)
+SET(MEDIA_H265_HEADERS
+../../include/rtp++/media/h265/H265AnnexBStreamParser.h
+../../include/rtp++/media/h265/H265AnnexBStreamWriter.h
+../../include/rtp++/media/h265/H265FormatDescription.h
+../../include/rtp++/media/h265/H265NalUnitTypes.h
+)
 SET(MEDIA_HEADERS
 ../../include/rtp++/media/IMediaTransform.h
 ../../include/rtp++/media/IVideoCodecTransform.h
 ../../include/rtp++/media/MediaDescriptor.h
 ../../include/rtp++/media/MediaSample.h
+../../include/rtp++/media/MediaSink.h
 ../../include/rtp++/media/MediaSource.h
+../../include/rtp++/media/MediaStreamParser.h
+../../include/rtp++/media/NalUnitMediaSource.h
 ../../include/rtp++/media/YuvMediaSource.h
 )
 SET(UTIL_HEADERS
 ../../include/rtp++/util/Base64.h
 ../../include/rtp++/util/Buffer.h
 ../../include/rtp++/util/Conversion.h
+../../include/rtp++/util/IBitStream.h
+../../include/rtp++/util/OBitStream.h
 )
 SET(RTP_SRCS
 ${CORE_SRCS} 
 ${EXPERIMENTAL_SRCS} 
+${MEDIA_H264_SRCS}
+${MEDIA_H265_SRCS}
 ${MEDIA_SRCS}
 ${UTIL_SRCS}
 )
@@ -75,12 +103,16 @@ ${UTIL_SRCS}
 SOURCE_GROUP("Source Files\\core" FILES ${CORE_SRCS})
 SOURCE_GROUP("Source Files\\experimental" FILES ${EXPERIMENTAL_SRCS})
 SOURCE_GROUP("Source Files\\media" FILES ${MEDIA_SRCS})
+SOURCE_GROUP("Header Files\\media\\h264" FILES ${MEDIA_H264_HEADERS})
+SOURCE_GROUP("Header Files\\media\\h265" FILES ${MEDIA_H265_HEADERS})
 SOURCE_GROUP("Source Files\\util" FILES ${UTIL_SRCS})
 
 
 SOURCE_GROUP("Header Files\\core" FILES ${CORE_HEADERS})
 SOURCE_GROUP("Header Files\\experimental" FILES ${EXPERIMENTAL_HEADERS})
 SOURCE_GROUP("Header Files\\media" FILES ${MEDIA_HEADERS})
+SOURCE_GROUP("Source Files\\media\\h264" FILES ${MEDIA_H264_SRCS})
+SOURCE_GROUP("Source Files\\media\\h265" FILES ${MEDIA_H265_SRCS})
 SOURCE_GROUP("Header Files\\util" FILES ${UTIL_HEADERS})
 
 
@@ -88,6 +120,8 @@ SET(RTP_HEADERS
 ${CORE_HEADERS}
 ${EXPERIMENTAL_HEADERS} 
 ${MEDIA_HEADERS}
+${MEDIA_H264_HEADERS}
+${MEDIA_H265_HEADERS}
 ${UTIL_HEADERS}
 )
 
