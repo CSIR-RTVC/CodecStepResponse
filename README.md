@@ -1,5 +1,6 @@
 # Codec Step Response
 
+[![Build Status](https://travis-ci.org/CSIR-RTVC/CodecStepResponse.png)](https://travis-ci.org/CSIR-RTVC/CodecStepResponse)
 Description of codec configurations used to characterise codec step response
 
 ## x264
