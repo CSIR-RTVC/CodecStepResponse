@@ -1,4 +1,11 @@
-Projects-vs2013/
-projects/
+*.txt.user
+*.swp
+bin/
 build
-
+data
+externals/rtp++/bin/
+externals/rtp++/lib/
+./lib/
+Projects/
+projects/
+Projects-vs2013/
