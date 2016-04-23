@@ -129,6 +129,10 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
 ENDIF(APPLE)
 ENDIF(UNIX)
 
+message(CMAKE_ROOT: ${CMAKE_ROOT} )
+message(CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR} )
+
+
 IF(WIN32)
 SET(rtp++Includes
 ${rtp++_SOURCE_DIR}
@@ -144,6 +148,8 @@ ${rtp++_SOURCE_DIR}
 ${rtp++_SOURCE_DIR}/lib
 ${rtp++_SOURCE_DIR}/libs
 ${rtp++_SOURCE_DIR}/../include/rtp++/
+${CMAKE_ROOT}/../build/
+${CMAKE_CURRENT_BINARY_DIR}/
 ${rtp++_SOURCE_DIR}/../build/
 ${rtp++_SOURCE_DIR}/../externals/glog/src/
 $ENV{BOOST_INCLUDE_DIR}
