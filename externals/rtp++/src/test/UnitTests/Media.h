@@ -1,4 +1,5 @@
 #pragma once
+#include <rtp++/media/NalUnitMediaSource.h>
 #include <rtp++/media/YuvMediaSource.h>
 
 namespace rtp_plus_plus {
@@ -26,6 +27,24 @@ BOOST_AUTO_TEST_CASE(tc_test_YuvMediaSource)
     }
   }
   BOOST_CHECK_EQUAL(iCount, uiFrameCount);
+}
+
+BOOST_AUTO_TEST_CASE(tc_test_NalUnitMediaSource)
+{
+  media::NalUnitMediaSource naluMediaSource("../data/352x288p30_Akiyo.264", rfc6184::H264, false, 0);
+  int iCount = 0;
+  int iNalCount = 0;
+  while (naluMediaSource.isGood())
+  {
+    std::vector<media::MediaSample> frame = naluMediaSource.getNextAccessUnit();
+    if (!frame.empty())
+    {
+      ++iCount;
+      iNalCount+= frame.size();
+    }
+  }
+  VLOG(2) << "Total frames: " << iCount << " Total NALUs: " << iNalCount;
+  BOOST_CHECK_EQUAL(iCount, 300);
 }
 
 } // test
