@@ -128,4 +128,3 @@ Description of codec configurations used to characterise codec step response
   pCodec->SetParameter("mode of operation", "2");
   pCodec->SetParameter("rate control model type", "2");
 ```
-
