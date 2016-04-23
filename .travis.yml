@@ -1,0 +1,31 @@
+language: cpp
+
+compiler:  
+    - gcc
+    - clang
+
+install:
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+# cmake 3: https://github.com/travis-ci/travis-ci/issues/4631
+addons:
+  apt:
+    sources:
+    - boost-latest
+    - ubuntu-toolchain-r-test
+    - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
+    - cmake
+    - cmake-data
+    - libboost1.55-all-dev
+
+before_script:  
+    - mkdir build
+    - cd build
+    - cmake ../src
+
+script: make  
+
