@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT( CodecStepResponse )
 
 message("Source Dir:" ${CodecStepResponse_SOURCE_DIR})
-#find_package (glog 0.3.4 REQUIRED)
 
 SET(EXECUTABLE_OUTPUT_PATH ${CodecStepResponse_SOURCE_DIR}/../bin)
 SET(LIBRARY_OUTPUT_PATH ${CodecStepResponse_SOURCE_DIR}/../bin)
@@ -96,10 +95,6 @@ ELSE(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
 ENDIF(APPLE)
 ENDIF(UNIX)
-
-message(CMAKE_ROOT: ${CMAKE_ROOT} )
-message(CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR} )
-
 
 IF(WIN32)
 SET(CodecStepResponseIncludes
