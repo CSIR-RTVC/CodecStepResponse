@@ -109,6 +109,8 @@ endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 # ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" CORE_SRCS)
 
 ADD_LIBRARY( rtp++ STATIC ${RTP_SRCS} ${RTP_HEADERS})
+ADD_DEPENDENCIES( rtp++ glog )
+#TARGET_LINK_LIBRARIES( rtp++ glog )
 
 
 # adding precompiled header support on windows
