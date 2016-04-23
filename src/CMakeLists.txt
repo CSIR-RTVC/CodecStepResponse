@@ -113,8 +113,6 @@ ${CodecStepResponse_SOURCE_DIR}/lib
 ${CodecStepResponse_SOURCE_DIR}/libs
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/include
 #${CodecStepResponse_SOURCE_DIR}/../include/CodecStepResponse/
-${CodecStepResponse_SOURCE_DIR}/../build/
-${CodecStepResponse_SOURCE_DIR}/../externals/glog/src/
 $ENV{BOOST_INCLUDE_DIR}
 /usr/local/include
 )
@@ -185,7 +183,6 @@ INCLUDE_DIRECTORIES(
 ${CodecStepResponse_SOURCE_DIR}/../include
 )
 
-ADD_SUBDIRECTORY( ../externals/glog ../build)
 ADD_SUBDIRECTORY( ../externals/rtp++/src ../build)
 
 ADD_SUBDIRECTORY( apps ) 
