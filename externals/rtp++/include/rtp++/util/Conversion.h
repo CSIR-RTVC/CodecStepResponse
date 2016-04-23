@@ -21,11 +21,12 @@ along with rtp++.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdint>
 #include <sstream>
 #include <vector>
-
 #include <boost/algorithm/string.hpp>
 
+namespace rtp_plus_plus {
+
 /**
- * Numeric and bool string conversion functions
+ * @brief Numeric and bool string conversion functions
  */
 // Should be deprecated since doesn't report failure
 template <class T>
@@ -149,3 +150,4 @@ static std::string boolToString(bool bValue)
   return sResult;
 }
 
+} // rtp_plus_plus
