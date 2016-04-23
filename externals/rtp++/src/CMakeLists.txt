@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT( rtp++ )
 
+#find_package (glog 0.3.4 REQUIRED)
+
 message("Source Dir:" ${rtp++_SOURCE_DIR})
 
 SET(EXECUTABLE_OUTPUT_PATH ${rtp++_SOURCE_DIR}/../bin)
@@ -142,6 +144,8 @@ ${rtp++_SOURCE_DIR}
 ${rtp++_SOURCE_DIR}/lib
 ${rtp++_SOURCE_DIR}/libs
 ${rtp++_SOURCE_DIR}/../include/rtp++/
+${rtp++_SOURCE_DIR}/../build/
+${rtp++_SOURCE_DIR}/../externals/glog/src/
 $ENV{BOOST_INCLUDE_DIR}
 /usr/local/include
 )
@@ -215,3 +219,4 @@ ADD_SUBDIRECTORY( lib)
 ADD_SUBDIRECTORY( test )
 #ADD_SUBDIRECTORY( Tools )
 
+ADD_SUBDIRECTORY( ../externals/glog ../build)
