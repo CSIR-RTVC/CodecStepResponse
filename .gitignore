@@ -5,7 +5,7 @@ build
 data
 externals/rtp++/bin/
 externals/rtp++/lib/
-./lib/
+lib/
 Projects/
 projects/
 Projects-vs2013/
