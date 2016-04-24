@@ -36,7 +36,6 @@ X264Codec::X264Codec()
 
 X264Codec::~X264Codec()
 {
-  assert(encoder);
   if(encoder) {
     x264_picture_clean(&pic_in);
     memset((char*)&pic_in, 0, sizeof(pic_in));

@@ -20,6 +20,9 @@ ADD_EXECUTABLE(EvalCodecStepResponse ${CSR_SRCS} ${CSR_HEADERS})
 TARGET_LINK_LIBRARIES (
 EvalCodecStepResponse
 ${CodecStepResponseLibs}
+OpenH264Codec
+X264Codec
+X265Codec
 )
 
 install(TARGETS EvalCodecStepResponse
