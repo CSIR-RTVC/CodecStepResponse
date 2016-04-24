@@ -226,5 +226,5 @@ ADD_SUBDIRECTORY( ../externals/glog ../build)
 ADD_SUBDIRECTORY( lib) 
 #ADD_SUBDIRECTORY( libs)
 ADD_SUBDIRECTORY( test )
-#ADD_SUBDIRECTORY( Tools )
+ADD_SUBDIRECTORY( tools )
 
