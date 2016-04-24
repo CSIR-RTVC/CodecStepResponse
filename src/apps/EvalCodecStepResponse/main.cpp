@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <sstream>
 #include <vector>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
@@ -58,14 +59,18 @@ int main(int argc, char** argv)
     uint32_t uiWidth = 0;
     uint32_t uiHeight = 0;
     double dFps = 0.0;
-
+    uint32_t uiLoopCount = 1;
+    std::string sLogfile, sLogDir;
     options_description cmdline_options;
     cmdline_options.add_options()
         ("help,?", "produce help message")
+        ("log,l", value<std::string>(&sLogfile)->default_value((boost::filesystem::path(argv[0]).leaf().string()), "Output log file."))
+        ("log-dir,L", value<std::string>(&sLogDir)->default_value(".", "Output log dir."))
         ("input,i", value<std::string>(&sYuvFile)->required()->notifier(validateYuvInput), "YUV input file")
         ("width,w", value<uint32_t>(&uiWidth)->required()->notifier(validateWidth), "Width")
         ("height,h", value<uint32_t>(&uiHeight)->required()->notifier(validateHeight), "Height")
         ("fps,f", value<double>(&dFps)->required()->notifier(validateFps), "FPS")
+        ("loop-count,c", value<uint32_t>(&uiLoopCount)->default_value(1), "Loop count. 0 = infinite.")
         ;
 
     variables_map vm;
@@ -83,7 +88,13 @@ int main(int argc, char** argv)
 
     notify(vm);
 
-    media::YuvMediaSource yuvMediaSource(sYuvFile, uiWidth, uiHeight, false, 0);
+    std::ostringstream logPath; logPath << sLogDir << "/" << sLogfile;
+    // update the log file: we want to be able to parse this file
+    google::SetLogDestination(google::GLOG_INFO, (logPath.str() + ".INFO").c_str());
+    google::SetLogDestination(google::GLOG_WARNING, (logPath.str() + ".WARNING").c_str());
+    google::SetLogDestination(google::GLOG_ERROR, (logPath.str() + ".ERROR").c_str());
+
+    media::YuvMediaSource yuvMediaSource(sYuvFile, uiWidth, uiHeight, uiLoopCount > 1, uiLoopCount);
 
     int iCount = 0;
     while (yuvMediaSource.isGood())
