@@ -136,6 +136,9 @@ ELSEIF(UNIX)
 SET(CodecStepResponseLink
 ${CodecStepResponse_SOURCE_DIR}/../lib
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/lib
+${CodecStepResponse_SOURCE_DIR}/../externals/x264/
+${CodecStepResponse_SOURCE_DIR}/../externals/openh264/
+${CodecStepResponse_SOURCE_DIR}/../externals/x265/build/
 ${BOOST_LIB_DIR}
 /usr/local/lib
 /usr/lib
