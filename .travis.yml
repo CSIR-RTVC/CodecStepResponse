@@ -23,6 +23,12 @@ addons:
     - libboost1.55-all-dev
 
 before_script:  
+    - cd externals/x264
+    - make
+    - cd -
+    - cd externals/openh264
+    - make
+    - cd -
     - mkdir build
     - cd build
     - cmake ../src
