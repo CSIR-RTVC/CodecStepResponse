@@ -1,8 +1,17 @@
+# since nasm and asm are not in white list
+# undo for container-based build
+sudo: required
+
 language: cpp
 
 compiler:  
     - gcc
     - clang
+
+# since nasm and asm are not in white list
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y yasm nasm
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
@@ -26,8 +35,10 @@ addons:
 
 before_script:  
     - cd externals/x264
+# since nasm and asm are not in white list
 # disabling asm since yasm isn't in apt sources whitelist
-    - ./configure --disable-asm
+#    - ./configure --disable-asm
+    - ./configure
     - make
     - cd -
     - cd externals/openh264
