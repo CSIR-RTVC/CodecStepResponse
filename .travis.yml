@@ -58,8 +58,7 @@ before_script:
     - cd -
 # x265
     - cd externals/x265
-    - mkdir projects
-    - cd projects
+    - cd build
     - cmake ../source
     - make
     - cd ../../..
