@@ -41,7 +41,8 @@ addons:
 #    - libboost1.55-all-dev
     - libboost-all-dev
 
-before_script:  
+before_script: 
+# x264 
     - cd externals/x264
 # since nasm and asm are not in white list
 # disabling asm since yasm isn't in apt sources whitelist
@@ -50,10 +51,19 @@ before_script:
 #    - ./configure
     - make
     - cd -
+# openh264
     - cd externals/openh264
 #    - ./configure
     - make
     - cd -
+# x265
+    - cd externals/x265
+    - mkdir projects
+    - cd projects
+    - cmake ../source
+    - make
+    - cd ../../..
+# CodecStepResponse
     - mkdir build
     - cd build
     - cmake ../src
