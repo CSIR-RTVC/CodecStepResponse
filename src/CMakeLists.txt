@@ -109,9 +109,9 @@ ELSEIF(UNIX)
 # Include directories
 SET(CodecStepResponseIncludes
 ${CodecStepResponse_SOURCE_DIR}
-${CodecStepResponse_SOURCE_DIR}/build/
 ${CodecStepResponse_SOURCE_DIR}/lib
 ${CodecStepResponse_SOURCE_DIR}/libs
+${CodecStepResponse_SOURCE_DIR}/../build/
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/include
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/build/
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/externals/glog/src/
