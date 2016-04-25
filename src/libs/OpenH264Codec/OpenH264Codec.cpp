@@ -113,7 +113,7 @@ boost::system::error_code OpenH264Codec::initialise()
       param.sSpatialLayers[i].iVideoHeight = m_in.getHeight() >> (param.iSpatialLayerNum - 1 - i);
       param.sSpatialLayers[i].fFrameRate = (uint32_t)m_in.getFps();
       param.sSpatialLayers[i].iSpatialBitrate = param.iTargetBitrate;
-      param.sSpatialLayers[i].sSliceCfg.uiSliceMode = SM_SINGLE_SLICE;
+      param.sSpatialLayers[i].sSliceArgument.uiSliceMode = SM_SINGLE_SLICE;
 #if 0
       param.sSpatialLayers[i].sSliceCfg.uiSliceMode = sliceMode;
       if (sliceMode == SM_DYN_SLICE) {
