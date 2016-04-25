@@ -37,8 +37,9 @@ before_script:
     - cd externals/x264
 # since nasm and asm are not in white list
 # disabling asm since yasm isn't in apt sources whitelist
-#    - ./configure --disable-asm
-    - ./configure
+    - ./configure --disable-asm
+# yasm version on precise is too old
+#    - ./configure
     - make
     - cd -
     - cd externals/openh264
