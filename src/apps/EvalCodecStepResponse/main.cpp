@@ -166,10 +166,12 @@ std::unique_ptr<IVideoCodecTransform> createAndInitialiseCodec(const std::string
   }
   else if (sVideoCodec == "H265")
   {
+#ifdef ENABLE_X265
     if (sVideoCodecImpl == "X265")
     {
       pCodec = std::unique_ptr<IVideoCodecTransform>(new X265Codec());
     }
+#endif
   }
 
   boost::system::error_code ec;
