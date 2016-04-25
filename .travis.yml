@@ -1,6 +1,8 @@
 # since nasm and asm are not in white list
 # undo for container-based build
 sudo: required
+# trying trusty since build is failing in precise
+dist: trusty
 
 language: cpp
 
