@@ -213,7 +213,7 @@ boost::system::error_code OpenH264Codec::transform(const std::vector<MediaSample
       for (int j = 0; j < layerInfo.iNalCount; ++j)
       {
         uint32_t uiNaluLength = layerInfo.pNalLengthInByte[j];
-        VLOG(2) << "Adding NALU of length " << uiNaluLength;
+        VLOG(6) << "Adding NALU of length " << uiNaluLength;
         len += uiNaluLength;
         Buffer mediaData(new uint8_t[uiNaluLength], uiNaluLength);
         memcpy((char*)mediaData.data(), pBuffer, uiNaluLength);
