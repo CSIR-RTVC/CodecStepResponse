@@ -1,0 +1,96 @@
+library(ggplot2)
+library(grid)
+
+vp.layout <- function(x, y) viewport(layout.pos.row=x, layout.pos.col=y) 
+arrange <- function(..., nrow=NULL, ncol=NULL, as.table=FALSE) { 
+  dots <- list(...) 
+  n <- length(dots) 
+  if(is.null(nrow) & is.null(ncol)) { nrow = floor(n/2) ; ncol = ceiling(n/nrow)} 
+  if(is.null(nrow)) { nrow = ceiling(n/ncol)} 
+  if(is.null(ncol)) { ncol = ceiling(n/nrow)} 
+  ## NOTE see n2mfrow in grDevices for possible alternative 
+  grid.newpage() 
+  pushViewport(viewport(layout=grid.layout(nrow,ncol) ) ) 
+  ii.p <- 1 
+  for(ii.row in seq(1, nrow)){ 
+    ii.table.row <- ii.row  
+    if(as.table) {ii.table.row <- nrow - ii.table.row + 1} 
+    for(ii.col in seq(1, ncol)){ 
+      ii.table <- ii.p 
+      if(ii.p > n) break 
+      print(dots[[ii.table]], vp=vp.layout(ii.table.row, ii.col)) 
+      ii.p <- ii.p + 1 
+    } 
+  } 
+} 
+
+file1 <-"<<file>>"
+psnr_file1 <-"<<psnr_file1>>"
+psnr_file2 <-"<<psnr_file2>>"
+bpp_ref_file1 <-"<<bpp_ref_file1>>"
+bpp_ref_file2 <-"<<bpp_ref_file2>>"
+width=<<width>>
+height=<<height>>
+fps=<<fps>>
+#rate_descriptor = <<rate_descriptor>>
+rate_mode = <<rate_mode>>
+switch_mode = <<switch_mode>>
+total_frames=<<total_frames>>
+#max_bits_per_frame1=bitrate1*1000/(width*height*fps)
+#max_bits_per_frame2=bitrate2*1000/(width*height*fps)
+
+t1 <- read.table(file1, header=TRUE, sep=",")
+#t1$BitsPerPixel <- t1$Size*8/(width*height)
+#t1$MaxBitsPerPixel <- 0
+#t1$MaxBitsPerPixel[1:switch_frame] <- max_bits_per_frame1
+#t1$MaxBitsPerPixel[(switch_frame+1):total_frames] <- max_bits_per_frame2
+
+#t2 <- read.table(psnr_file1, header=TRUE)
+#t3 <- read.table(psnr_file2, header=TRUE)
+# PSNR file is zero-indexed
+#t2$Frame <- t2$Frame + 1
+#t3$Frame <- t3$Frame + 1
+
+# read bpp references : 1-indexed
+#t4 <- read.table(bpp_ref_file1, header=TRUE)
+#t5 <- read.table(bpp_ref_file2, header=TRUE)
+# calculate difference
+#t5$Diff <- t1$BitsPerPixel - t5$Bpp
+
+img_sum1 <- paste(file1, ".png")
+png(img_sum1,width=1800,height=1200)
+
+# this doesn't work for 1000 kbps sequences
+p1 <- ggplot() +
+  geom_line(data = t1, aes(x=t1$Frame, y=t1$Bpp), color="green") +
+  geom_line(data = t1, aes(x=t1$Frame, y=t1$TargetBpp), color="red") +
+#  geom_line(data = t1, aes(x=t1$Frame, y=t1$MaxBitsPerPixel), color="red") +
+  ylim(0,2.4)
+
+# this was used for the last lower rate sequences
+p1 <- ggplot() +
+  geom_line(data = t1, aes(x=t1$Frame, y=t1$Bpp), color="green") +
+  geom_line(data = t1, aes(x=t1$Frame, y=t1$TargetBpp), color="red") +
+#  geom_line(data = t5, aes(x=t5$Frame, y=t5$Bpp), color="yellow") +
+#  geom_line(data = t5, aes(x=t5$Frame, y=t5$Diff), color="blue") +
+  ylim(-0.1,0.2)
+
+img_file1 <- paste("details/bpp", file1, "png", sep=".")
+#ggsave(filename=img_file1, plot=p1)
+#plot(p1)
+
+p2 <- ggplot() +
+#  geom_point(data = t2, aes(x=t2$Frame, y=t2$PSNR_Y), color="yellow") +
+#  geom_point(data = t3, aes(x=t3$Frame, y=t3$PSNR_Y), color="orange") +
+  geom_point(data = t1, aes(x=t1$Frame, y=t1$PSNR_Y), color="green") +
+  ylim(0,50)
+
+img_file2 <- paste("details/psnr", file1, "png", sep=".")
+#ggsave(filename=img_file2, plot=p2)
+#plot(p2)
+
+
+# --------------------------- one way delay data---------------------------
+# Arrange and display the plots into a nx1 grid
+arrange(p1,p2,ncol=1)
+dev.off()
