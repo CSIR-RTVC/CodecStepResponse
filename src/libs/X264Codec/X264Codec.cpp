@@ -300,6 +300,11 @@ boost::system::error_code X264Codec::setBitrate(uint32_t uiTargetBitrate)
   {
     m_uiTargetBitrate = uiTargetBitrate;
 
+    if (!encoder)
+    {
+      // initialise has not been called yet
+      return boost::system::error_code();
+    }
   #if 0
     configureParams();
     // close and re-open encoder
@@ -316,6 +321,7 @@ boost::system::error_code X264Codec::setBitrate(uint32_t uiTargetBitrate)
 #if 0
   configureParams();
 #else
+    VLOG(2) << "X264Codec::setBitrate " << m_uiTargetBitrate << " kbps vbv_buffer_size: " << m_uiTargetBitrate << " cbrf: " << m_dCbrFactor;
     x264_param_t param;
     x264_encoder_parameters( encoder, &param );
     // use re-config
