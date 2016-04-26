@@ -297,7 +297,7 @@ int main(int argc, char** argv)
         ("repeat-count,c", value<uint32_t>(&uiLoopCount)->default_value(1), "Number of repetitions. 0 = infinite.")
         ("video-codec", value<std::string>(&sVideoCodec)->required()->notifier(validateVideoCodec), "Codec: [h264,h265]")
         ("vc-impl", value<std::string>(&sVideoCodecImpl)->required()->notifier(validateVideoCodecImpl), "Codec: [openh264,x264,x265,vpp]")
-        ("vc-param", value<std::vector<std::string>>(&videoCodecParams), "Video codec parameters")
+        ("vc-param", value<std::vector<std::string>>(&videoCodecParams), "Video codec parameters.")
         ("rate-mode", value<uint32_t>(&uiRateMode)->default_value(0), "Rate mode. 0=kbps,1=bpp.")
         ("switch-mode", value<uint32_t>(&uiSwitchMode)->default_value(0), "Switch mode. 0=frame,1=time(s).")
         ("rate-descriptor", value<std::string>(&sRateDescriptor)->required()->notifier(validateRateDescriptor), "Rate descriptor format: <rate>[:<duration>[_<rate_descriptor>]]")
@@ -328,6 +328,7 @@ int main(int argc, char** argv)
     // convert switch point to frame
     std::vector<RateDescriptor> rates = parseRateDescriptor(sRateDescriptor);
     std::vector<double> vKbps;
+    std::vector<double> vBpp;
     std::vector<uint32_t> vSwitchFrames = {0}; // first switch to bitrate is at the beginning
     uint32_t uiPreviousSwitchFrame = 0;
     double dFrameDuration = 1.0/dFps;
@@ -338,11 +339,13 @@ int main(int argc, char** argv)
         case RATE_MODE_KBPS:
         {
           vKbps.push_back(rate.Rate);
+          vBpp.push_back(rate.Rate * 1000 /( uiWidth * uiHeight * dFps));
           break;
         }
         case RATE_MODE_BPP:
         {
-          double dKbps = rate.Rate * uiWidth * uiHeight * dFps;
+          vBpp.push_back(rate.Rate);
+          double dKbps = (rate.Rate * uiWidth * uiHeight * dFps)/1000.0;
           vKbps.push_back(dKbps);
           break;
         }
@@ -393,6 +396,8 @@ int main(int argc, char** argv)
     uint32_t uiCurrentSwitchFrameIndex = 0;
     auto start = std::chrono::steady_clock::now();
 
+    double dCurrentRateKbps = 0.0;
+    double dCurrentRateBpp = 0.0;
     while (yuvMediaSource.isGood())
     {
       std::vector<media::MediaSample> encodedSamples;
@@ -404,11 +409,13 @@ int main(int argc, char** argv)
             (uiCurrentRateKbpsIndex < vKbps.size())
             )
         {
-          VLOG(2) << "Setting next bitrate to " << vKbps[uiCurrentRateKbpsIndex] << " kbps Current frame: " << iCurrentFrame;
-          boost::system::error_code ec = pCodec->setBitrate(vKbps[uiCurrentRateKbpsIndex++]);
+          dCurrentRateKbps = vKbps[uiCurrentRateKbpsIndex];
+          dCurrentRateBpp = vBpp[uiCurrentRateKbpsIndex++];
+          VLOG(2) << "Setting next bitrate to " << dCurrentRateKbps << " kbps Current frame: " << iCurrentFrame;
+          boost::system::error_code ec = pCodec->setBitrate(dCurrentRateKbps);
           if (ec)
           {
-            LOG(WARNING) << "Failed to update bitrate to " << vKbps[uiCurrentRateKbpsIndex - 1] << "kbps";
+            LOG(WARNING) << "Failed to update bitrate to " << dCurrentRateKbps << "kbps";
           }
           ++uiCurrentSwitchFrameIndex;
         }
@@ -423,6 +430,16 @@ int main(int argc, char** argv)
         }
         else
         {
+          std::ostringstream ostr;
+          ostr << "ECSR #1 Frame " << iCurrentFrame << " Time: " << iCurrentFrame * dFrameDuration
+               << " NALUs: " << encodedSamples.size()
+               << " bpp: " << (uiEncodedSize * 8.0)/(uiWidth * uiHeight)
+               << " target bpp: " << dCurrentRateBpp
+               << " Encoded sample size: " << uiEncodedSize << " (";
+          for (auto& nalu : encodedSamples)
+            ostr << " " << nalu.getPayloadSize();
+          ostr << " )";
+          VLOG(2) << ostr.str();
           // write to sink
           pMediaSink->writeAu(encodedSamples);
         }
