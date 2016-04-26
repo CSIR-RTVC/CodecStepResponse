@@ -26,7 +26,7 @@ namespace rtp_plus_plus
 namespace media
 {
 
-YuvMediaSource::YuvMediaSource(const std::string& sFilename, const uint32_t uiWidth, const uint32_t uiHeight, bool bLoopSource, uint32_t uiLoopCount)
+YuvMediaSource::YuvMediaSource(const std::string& sFilename, const uint32_t uiWidth, const uint32_t uiHeight, bool bRepeat, uint32_t uiRepetitions)
   :m_in(sFilename.c_str() , std::ifstream::in | std::ifstream::binary),
     m_rIn(m_in),
     m_eType(MT_YUV_420P),
@@ -34,8 +34,8 @@ YuvMediaSource::YuvMediaSource(const std::string& sFilename, const uint32_t uiWi
     m_uiWidth(uiWidth),
     m_uiHeight(uiHeight),
     m_bEos(false),
-    m_bLoopSource(bLoopSource),
-    m_uiLoopCount(uiLoopCount),
+    m_bRepeat(bRepeat),
+    m_uiRepetitions(uiRepetitions),
     m_uiCurrentLoop(0),
     m_uiYuvFrameSize(static_cast<std::size_t>(uiWidth * uiHeight * 1.5)),
     m_iTotalFrames(0),
@@ -46,14 +46,14 @@ YuvMediaSource::YuvMediaSource(const std::string& sFilename, const uint32_t uiWi
   parseStream();
 }
 
-YuvMediaSource::YuvMediaSource(std::istream& in1, const uint32_t uiWidth, const uint32_t uiHeight, bool bLoopSource, uint32_t uiLoopCount)
+YuvMediaSource::YuvMediaSource(std::istream& in1, const uint32_t uiWidth, const uint32_t uiHeight, bool bRepeat, uint32_t uiRepetitions)
   :m_rIn(in1),
     m_eType(MT_YUV_420P),
     m_uiWidth(uiWidth),
     m_uiHeight(uiHeight),
     m_bEos(false),
-    m_bLoopSource(bLoopSource),
-    m_uiLoopCount(uiLoopCount),
+    m_bRepeat(bRepeat),
+    m_uiRepetitions(uiRepetitions),
     m_uiCurrentLoop(0),
     m_uiYuvFrameSize(static_cast<std::size_t>(uiWidth * uiHeight * 1.5)),
     m_iTotalFrames(0),
@@ -108,17 +108,19 @@ std::vector<MediaSample> YuvMediaSource::getNextAccessUnit()
   }
   else
   {
-    if (m_bLoopSource)
+    if (m_bRepeat)
     {
-      if (m_uiLoopCount != 0 && m_uiCurrentLoop < m_uiLoopCount)
+      if (m_uiRepetitions != 0 && m_uiCurrentLoop < m_uiRepetitions)
       {
-        m_uiCurrentFrame = 0;
+        // set for next read
+        m_uiCurrentFrame = 1;
         ++m_uiCurrentLoop;
         return readMediaSample();
       }
-      else if (m_uiLoopCount == 0)
+      else if (m_uiRepetitions == 0)
       {
-        m_uiCurrentFrame = 0;
+        // set for next read
+        m_uiCurrentFrame = 1;
         return readMediaSample();
       }
       else
@@ -131,7 +133,6 @@ std::vector<MediaSample> YuvMediaSource::getNextAccessUnit()
       m_bEos = true;
     }
   }
-
   return std::vector<MediaSample>();
 }
 

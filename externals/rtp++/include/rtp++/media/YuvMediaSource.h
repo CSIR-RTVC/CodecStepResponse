@@ -39,23 +39,19 @@ public:
    * @param[in] sFilename The name of the file containing the Annex B bitstream
    * @param[in] uiWidth Width of YUV media
    * @param[in] uiHeight Height of YUV media
-   * @param[in] bLoopSource Configures the source to loop on end of stream
-   * @param[in] uiLoopCount Configures the number of times the source is looped
-   * IFF bLoopSource is true. A value of 0 means that the source will loop
-   * indefinitely
+   * @param[in] bRepeat if file should be repeated on EOF
+   * @param[in] uiRepetitions number of times the file is to be looped. 0 means to loop indefinitely.
    */
-  YuvMediaSource(const std::string& sFilename, const uint32_t uiWidth, const uint32_t uiHeight, bool bLoopSource, uint32_t uiLoopCount);
+  YuvMediaSource(const std::string& sFilename, const uint32_t uiWidth, const uint32_t uiHeight, bool bRepeat = false, uint32_t uiRepetitions = 1);
   /**
    * @brief YuvMediaSource
    * @param in1 A reference to the istream that has opened the Annex B stream
    * @param[in] uiWidth Width of YUV media
    * @param[in] uiHeight Height of YUV media
-   * @param bLoopSource Configures the source to loop on end of stream
-   * @param uiLoopCount Configures the number of times the source is looped
-   * IFF bLoopSource is true. A value of 0 means that the source will loop
-   * indefinitely
+   * @param[in] bRepeat if file should be repeated on EOF
+   * @param[in] uiRepetitions number of times the file is to be looped. 0 means to loop indefinitely.
    */
-  YuvMediaSource(std::istream& in1, const uint32_t uiWidth, const uint32_t uiHeight, bool bLoopSource, uint32_t uiLoopCount);
+  YuvMediaSource(std::istream& in1, const uint32_t uiWidth, const uint32_t uiHeight, bool bRepeat = false, uint32_t uiRepetitions = 1);
   /**
    * @brief isGood This method can be used to check if NAL units can be read. If the end of
    * stream is reached and the source is not configured to loop or if the maximum loop count
@@ -107,10 +103,10 @@ private:
   uint32_t m_uiHeight;
   // state of source
   bool m_bEos;
-  // if source should loop
-  bool m_bLoopSource;
+  // should loop
+  bool m_bRepeat;
   // total number of loops if m_bLoopSource
-  uint32_t m_uiLoopCount;
+  uint32_t m_uiRepetitions;
   // Current loop
   uint32_t m_uiCurrentLoop;
   // frame size
