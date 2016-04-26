@@ -27,6 +27,7 @@ using namespace rtp_plus_plus::media;
 OpenH264Codec::OpenH264Codec()
   :m_pCodec(nullptr),
     m_uiTargetBitrate(0),
+    m_bInitialised(false),
     m_uiEncodingBufferSize(0)
 {
   int rv = WelsCreateSVCEncoder (&m_pCodec);
@@ -108,18 +109,19 @@ boost::system::error_code OpenH264Codec::initialise()
   param.bEnableSceneChangeDetect = false;
 #endif
   param.bEnableFrameSkip = false;
-  for (int i = 0; i < param.iSpatialLayerNum; i++) {
-      param.sSpatialLayers[i].iVideoWidth = m_in.getWidth() >> (param.iSpatialLayerNum - 1 - i);
-      param.sSpatialLayers[i].iVideoHeight = m_in.getHeight() >> (param.iSpatialLayerNum - 1 - i);
-      param.sSpatialLayers[i].fFrameRate = (uint32_t)m_in.getFps();
-      param.sSpatialLayers[i].iSpatialBitrate = param.iTargetBitrate;
-      param.sSpatialLayers[i].sSliceArgument.uiSliceMode = SM_SINGLE_SLICE;
+  for (int i = 0; i < param.iSpatialLayerNum; i++)
+  {
+    param.sSpatialLayers[i].iVideoWidth = m_in.getWidth() >> (param.iSpatialLayerNum - 1 - i);
+    param.sSpatialLayers[i].iVideoHeight = m_in.getHeight() >> (param.iSpatialLayerNum - 1 - i);
+    param.sSpatialLayers[i].fFrameRate = (uint32_t)m_in.getFps();
+    param.sSpatialLayers[i].iSpatialBitrate = param.iTargetBitrate;
+    param.sSpatialLayers[i].sSliceArgument.uiSliceMode = SM_SINGLE_SLICE;
 #if 0
-      param.sSpatialLayers[i].sSliceCfg.uiSliceMode = sliceMode;
-      if (sliceMode == SM_DYN_SLICE) {
-          param.sSpatialLayers[i].sSliceCfg.sSliceArgument.uiSliceSizeConstraint = 600;
-          param.uiMaxNalSize = 1500;
-      }
+    param.sSpatialLayers[i].sSliceCfg.uiSliceMode = sliceMode;
+    if (sliceMode == SM_DYN_SLICE) {
+        param.sSpatialLayers[i].sSliceCfg.sSliceArgument.uiSliceSizeConstraint = 600;
+        param.uiMaxNalSize = 1500;
+    }
 #endif
   }
   param.iTargetBitrate *= param.iSpatialLayerNum;
@@ -127,7 +129,7 @@ boost::system::error_code OpenH264Codec::initialise()
   int videoFormat = videoFormatI420;
   m_pCodec->SetOption (ENCODER_OPTION_DATAFORMAT, &videoFormat);
 #endif
-
+  m_bInitialised = true;
   return boost::system::error_code();
 }
 
@@ -237,6 +239,12 @@ boost::system::error_code OpenH264Codec::setBitrate(uint32_t uiTargetBitrate)
 {
   if (m_uiTargetBitrate != uiTargetBitrate)
   {
+    m_uiTargetBitrate = uiTargetBitrate;
+    if (!m_bInitialised)
+    {
+      return boost::system::error_code();
+    }
+
 #if 0
     return boost::system::error_code(boost::system::errc::argument_out_of_domain, boost::system::generic_category());
 #else

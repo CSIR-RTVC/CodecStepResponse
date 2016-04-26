@@ -35,7 +35,6 @@ class ISVCEncoder;
 class Open_H264_API OpenH264Codec : public rtp_plus_plus::media::IVideoCodecTransform
 {
 public:
-
   /**
    * @brief OpenH264Codec
    */
@@ -78,7 +77,7 @@ private:
   
   ISVCEncoder* m_pCodec;
   uint32_t m_uiTargetBitrate;
-
+  bool m_bInitialised;
   uint32_t m_uiEncodingBufferSize;
   rtp_plus_plus::Buffer m_encodingBuffer;
 };
