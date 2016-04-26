@@ -22,7 +22,7 @@ EvalCodecStepResponse
 ${CodecStepResponseLibs}
 OpenH264Codec
 X264Codec
-#X265Codec
+X265Codec
 )
 
 install(TARGETS EvalCodecStepResponse
