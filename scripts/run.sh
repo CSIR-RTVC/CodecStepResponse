@@ -5,7 +5,7 @@ rates=rates.cfg
 sequences=sequences.cfg
 cmd_template=EvalCodecStepResponse.template
 
-# iterate over all codecs, bitrates, and switches and sequences
+# iterate over all codecs, rates, and sequences
 
 while read name codec codec_mt file_ext mode decoder dec_if codec_parameters
 do
@@ -27,7 +27,7 @@ do
           continue
         fi
 
-        echo "Codec: $name $codec $codec_mt $mode $decoder $rcmt $cbrf sequence : $sequence $width"x"$height@$fps rate_mode: $rate_mode switch_mode: $switch_mode rate_descriptor: $rate_descriptor"
+        echo "Codec: $name $codec $codec_mt $mode $decoder sequence : $sequence $width"x"$height@$fps rate_mode: $rate_mode switch_mode: $switch_mode rate_descriptor: $rate_descriptor"
 
         esc_seq=$(echo $sequence | sed 's/\//\\\//g')
         fn=$(basename $sequence)
@@ -36,13 +36,37 @@ do
         script="eval_$id.sh"
         rscript="eval_$id.R"
         out="enc_$id"
-        
-	ref_id1=$base_fn"_"$width"_"$height"_"$fps"_"$name
-        ref_id2=$base_fn"_"$width"_"$height"_"$fps"_"$name
+ 
+# for each of the rates, generate script and ref
+        rate_params=(${rate_descriptor//,/ })
+        for rate in "${rate_params[@]}"
+        do
+           echo "Rate: $rate"
+        done
+        first=${rate_params[0]}
+        pair1=(${first//:/ })
+        rate1=${pair1[0]}
+	echo "Rate 1: ${pair1[0]} Duration: ${pair1[1]}"        
+	second=${rate_params[1]}
+        pair2=(${second//:/ })
+	rate2=${pair2[0]}
+        echo "Rate 2: ${pair2[0]} Duration: ${pair2[1]}"
+
+	id1=$id"_"$rate1
+        id2=$id"_"$rate2
+        out1="enc_$id1"
+        out2="enc_$id2"
+        sum_csv1="references\/sum_$out1".csv
+        sum_csv2="references\/sum_$out2".csv
+
+	ref_id1=$id"_"$rate1
+        ref_id2=$id"_"$rate2
 	psnr_file1="references\/enc_""$ref_id1".psnr.csv
 	psnr_file2="references\/enc_""$ref_id2".psnr.csv
 	bpp_ref_file1="references\/enc_""$ref_id1".bpp.csv
 	bpp_ref_file2="references\/enc_""$ref_id2".bpp.csv
+
+	echo "Ref1: $ref_id1 Ref2: $ref_id2"
 
 # generate sender cmd line
         sed -e "s/<<codec>>/$codec/g" EvalCodecStepResponse.template > $script
@@ -53,14 +77,12 @@ do
         sed -i -e "s/<<fps>>/$fps/g" $script
         sed -i -e "s/<<mode>>/$mode/g" $script
         sed -i -e "s/<<out>>/$out/g" $script
-
         sed -i -e "s/<<switch_mode>>/$switch_mode/g" $script
         sed -i -e "s/<<rate_mode>>/$rate_mode/g" $script
         sed -i -e "s/<<rate_descriptor>>/$rate_descriptor/g" $script
 
 # generate additional params
 	additional_params=""
-
 	codec_params=(${codec_parameters//;/ })
         for param in "${codec_params[@]}"
         do
@@ -71,86 +93,36 @@ do
         done
         echo "add: $additional_params"
         sed -i -e "s/<<additional_params>>/$additional_params/g" $script
-        
         chmod 755 $script
 
 # run cmd line
         echo "Running script"
         bash $script
-#        exit 0
         
         res=$?
         if [ $res -ne 0 ]; then
           echo "Error running script: $script"
           exit -1
         fi 
-## generate analyser file
-#        echo "Analysing encoded file"
-#        GLOG_v=5 GLOG_logtostderr=1 ../VideoAnalyser -s "$out"."$file_ext" --fps "$fps" --format "$codec_mt" -v 2> "$out".txt
-#
-## extract sizes into csv
-#        echo "Extracting NALU info"
-#        grep "Video AU" "$out".txt | awk '{print $7" "$10" "$12" "substr($15,2,length($15)-2)" "substr($18,2,length($18)-2)" "substr($21,2,length($21)-2)" "substr($24,2,length($24)-2)" "substr($27,2,length($27)-2)" "}' > "$out".csv
-#
-#        exit 0
 	csv_file="$out".csv
         echo "Frame Time NALUs Bpp TargetBpp Size" > $csv_file
         grep "ECSR #1" logs/EvalCodecStepResponse.INFO | awk '{print $8" "$10" "$12" "$14" "$17" "$21" "}' >> "$csv_file"
-## sum NALU sizes into CSV file with sums
-#	csv_file2=_"$out".csv
         yuv_file="$out".yuv
-#
-#        echo "Frame Time NALUs Size Bpp" > $csv_file2
-#        while read frame_num time count size1 size2 size3 size4 size5 size6
-#        do
-#          sum=0
-#          sum=$(($sum + $size1))
-#          if [[ ! -z $size2 ]]
-#          then
-#            sum=$(($sum + $size2))
-#          fi
-#          if [[ ! -z $size3 ]]
-#          then
-#            sum=$(($sum + $size3))
-#          fi
-#          if [[ ! -z $size4 ]]
-#          then
-#            sum=$(($sum + $size4))
-#          fi
-#          if [[ ! -z $size5 ]]
-#          then
-#            sum=$(($sum + $size5))
-#          fi
-#          if [[ ! -z $size6 ]]
-#          then
-#            sum=$(($sum + $size6))
-#          fi
-## calculate bits per pixel
-#          bpp=$(bc -l <<< "scale=8; ($sum*8)/($width*$height)")
-#	  bpp2=$(echo $bpp | sed -r 's/^\./0./')
-#
-#          echo "$frame_num $time $count $sum $bpp2" >> $csv_file2
-#        done < $csv_file
-## overwrite file with separate NALUs
-#	mv $csv_file2 $csv_file
-#        
-##	exit 0
+
 ## decode encoded file for PSNR
         echo "Decoding and calculating PSNR"
         ../$decoder -"$dec_if" "$out"."$file_ext" -o "$yuv_file"  > "$out".dec.txt
 
-#	exit 0
-	
 	psnr_file="$out".psnr.csv
         echo "Generating PSNR: " $psnr_file
         echo "Frame PSNR_Y PSNR_U PSNR_V" > $psnr_file
         ../GeneratePSNR $width $height $sequence "$yuv_file" >> $psnr_file
         sed -i "s/,/./g" $psnr_file
+
 # delete yuv file for space constraints
         echo "Deleting YUV"
 	rm $yuv_file
 
-#	exit 0
 # get rid of total's and empty line
         lines=$(wc -l "$psnr_file" | awk '{print $1}')
 	new_lines=$(($lines - 3))
@@ -179,12 +151,13 @@ do
         sed -i -e "s/<<psnr_file2>>/$psnr_file2/g" $rscript
         sed -i -e "s/<<bpp_ref_file1>>/$bpp_ref_file1/g" $rscript
         sed -i -e "s/<<bpp_ref_file2>>/$bpp_ref_file2/g" $rscript
+        sed -i -e "s/<<sum_csv1>>/$sum_csv1/g" $rscript
+        sed -i -e "s/<<sum_csv2>>/$sum_csv2/g" $rscript
 
 # run R script
         echo "Running R script"
 	Rscript $rscript
 
-#        exit 0
       done < $sequences
 
   done < $rates

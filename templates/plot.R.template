@@ -29,12 +29,14 @@ psnr_file1 <-"<<psnr_file1>>"
 psnr_file2 <-"<<psnr_file2>>"
 bpp_ref_file1 <-"<<bpp_ref_file1>>"
 bpp_ref_file2 <-"<<bpp_ref_file2>>"
+sum_csv_file1 <-"<<sum_csv1>>"
+sum_csv_file2 <-"<<sum_csv2>>"
 width=<<width>>
 height=<<height>>
 fps=<<fps>>
 #rate_descriptor = <<rate_descriptor>>
-rate_mode = <<rate_mode>>
-switch_mode = <<switch_mode>>
+rate_mode=<<rate_mode>>
+switch_mode=<<switch_mode>>
 total_frames=<<total_frames>>
 #max_bits_per_frame1=bitrate1*1000/(width*height*fps)
 #max_bits_per_frame2=bitrate2*1000/(width*height*fps)
@@ -57,20 +59,31 @@ t1 <- read.table(file1, header=TRUE, sep=",")
 # calculate difference
 #t5$Diff <- t1$BitsPerPixel - t5$Bpp
 
-img_sum1 <- paste(file1, ".png")
+# sum csv file is 0-indexed
+t_ref1 <- read.table(sum_csv_file1, header=TRUE)
+t_ref2 <- read.table(sum_csv_file2, header=TRUE)
+# PSNR file is zero-indexed
+t_ref1$Frame <- t_ref1$Frame + 1
+t_ref2$Frame <- t_ref2$Frame + 1
+# calculate difference to lower rate
+t_ref2$Diff <- t1$Bpp - t_ref2$Bpp
+
+out_file1 <- paste(file1, ".png")
+img_sum1 <- paste("pngs/", out_file1)
 png(img_sum1,width=1800,height=1200)
 
 # this doesn't work for 1000 kbps sequences
-p1 <- ggplot() +
-  geom_line(data = t1, aes(x=t1$Frame, y=t1$Bpp), color="green") +
-  geom_line(data = t1, aes(x=t1$Frame, y=t1$TargetBpp), color="red") +
-#  geom_line(data = t1, aes(x=t1$Frame, y=t1$MaxBitsPerPixel), color="red") +
-  ylim(0,2.4)
+#p1 <- ggplot() +
+#  geom_line(data = t1, aes(x=t1$Frame, y=t1$Bpp), color="green") +
+#  geom_line(data = t1, aes(x=t1$Frame, y=t1$TargetBpp), color="red") +
+#  ylim(0,2.4)
 
 # this was used for the last lower rate sequences
 p1 <- ggplot() +
   geom_line(data = t1, aes(x=t1$Frame, y=t1$Bpp), color="green") +
   geom_line(data = t1, aes(x=t1$Frame, y=t1$TargetBpp), color="red") +
+  geom_line(data = t_ref1, aes(x=t_ref1$Frame, y=t_ref1$Bpp), color="yellow") +
+  geom_line(data = t_ref2, aes(x=t_ref2$Frame, y=t_ref2$Diff), color="blue") +
 #  geom_line(data = t5, aes(x=t5$Frame, y=t5$Bpp), color="yellow") +
 #  geom_line(data = t5, aes(x=t5$Frame, y=t5$Diff), color="blue") +
   ylim(-0.1,0.2)
@@ -82,6 +95,8 @@ img_file1 <- paste("details/bpp", file1, "png", sep=".")
 p2 <- ggplot() +
 #  geom_point(data = t2, aes(x=t2$Frame, y=t2$PSNR_Y), color="yellow") +
 #  geom_point(data = t3, aes(x=t3$Frame, y=t3$PSNR_Y), color="orange") +
+  geom_point(data = t_ref1, aes(x=t_ref1$Frame, y=t_ref1$PSNR_Y), color="yellow") +
+  geom_point(data = t_ref2, aes(x=t_ref2$Frame, y=t_ref2$PSNR_Y), color="orange") +
   geom_point(data = t1, aes(x=t1$Frame, y=t1$PSNR_Y), color="green") +
   ylim(0,50)
 
@@ -94,3 +109,4 @@ img_file2 <- paste("details/psnr", file1, "png", sep=".")
 # Arrange and display the plots into a nx1 grid
 arrange(p1,p2,ncol=1)
 dev.off()
+
