@@ -39,10 +39,17 @@ do
  
 # for each of the rates, generate script and ref
         rate_params=(${rate_descriptor//,/ })
+	id_string=""
         for rate in "${rate_params[@]}"
         do
            echo "Rate: $rate"
+           pair=(${rate//:/ })
+           current_rate=${pair[0]}
+           current_duration=${pair[1]}
+           id_string="$id_string"_"$current_rate"_"$current_duration"
         done
+	out="$out$id_string"
+        echo "Unique id_string: $id_string Updated out: $out"
         first=${rate_params[0]}
         pair1=(${first//:/ })
         rate1=${pair1[0]}
