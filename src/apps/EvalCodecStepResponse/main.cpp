@@ -15,7 +15,9 @@
 #include <OpenH264Codec/OpenH264Codec.h>
 #include <X264Codec/X264Codec.h>
 #include <X265Codec/X265Codec.h>
-
+#ifdef ENABLE_VPP
+#include <VppH264Codec/VppH264Codec.h>
+#endif
 using namespace rtp_plus_plus;
 using namespace rtp_plus_plus::media;
 using namespace boost::program_options;
@@ -163,6 +165,12 @@ std::unique_ptr<IVideoCodecTransform> createAndInitialiseCodec(const std::string
     {
       pCodec = std::unique_ptr<IVideoCodecTransform>(new X264Codec());
     }
+#ifdef ENABLE_VPP
+    else if (sVideoCodecImpl == "VPP")
+    {
+      pCodec = std::unique_ptr<IVideoCodecTransform>(new VppH264Codec());
+    }
+#endif
   }
   else if (sVideoCodec == "H265")
   {
@@ -324,6 +332,11 @@ int main(int argc, char** argv)
     google::SetLogDestination(google::GLOG_WARNING, (logPath.str() + ".WARNING").c_str());
     google::SetLogDestination(google::GLOG_ERROR, (logPath.str() + ".ERROR").c_str());
 
+    std::ostringstream command;
+    for (int i = 0; i < argc; ++i)
+      command << argv[i] << " ";
+    LOG(INFO) << command.str();
+
     // convert to kbps as this is understood by encoders
     // convert switch point to frame
     std::vector<RateDescriptor> rates = parseRateDescriptor(sRateDescriptor);
@@ -391,6 +404,7 @@ int main(int argc, char** argv)
 
     media::YuvMediaSource yuvMediaSource(sYuvFile, uiWidth, uiHeight, bRepeat, uiLoopCount);
 
+    std::vector<uint32_t> vEncodingTimes;
     int iCurrentFrame = 0;
     uint32_t uiCurrentRateKbpsIndex = 0;
     uint32_t uiCurrentSwitchFrameIndex = 0;
@@ -420,9 +434,19 @@ int main(int argc, char** argv)
           ++uiCurrentSwitchFrameIndex;
         }
 
+#define MEASURE_ENCODING_TIME
+#ifdef MEASURE_ENCODING_TIME
+        boost::posix_time::ptime tStart = boost::posix_time::microsec_clock::universal_time();
+#endif
         // encode
         uint32_t uiEncodedSize = 0;
         boost::system::error_code ec = pCodec->transform(frame, encodedSamples, uiEncodedSize);
+
+#ifdef MEASURE_ENCODING_TIME
+        boost::posix_time::ptime tEnd = boost::posix_time::microsec_clock::universal_time();
+        boost::posix_time::time_duration diff = tEnd - tStart;
+#endif
+
         if (ec)
         {
           LOG(WARNING) << "Error in media encode: " << ec.message();
@@ -439,6 +463,11 @@ int main(int argc, char** argv)
           for (auto& nalu : encodedSamples)
             ostr << " " << nalu.getPayloadSize();
           ostr << " )";
+#ifdef MEASURE_ENCODING_TIME
+          ostr << " Time to encode: " << diff.total_milliseconds() << "ms";
+          vEncodingTimes.push_back(diff.total_milliseconds());
+#endif
+
           VLOG(2) << ostr.str();
           // write to sink
           pMediaSink->writeAu(encodedSamples);
@@ -449,7 +478,12 @@ int main(int argc, char** argv)
     auto end = std::chrono::steady_clock::now();
     auto diff = end - start;
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff);
-    LOG(INFO) << "Read " << iCurrentFrame << " frames in " << sYuvFile << " (" << elapsed_ms.count() << " ms)";
+
+    double dAverageEncodingTime = std::accumulate(vEncodingTimes.begin(), vEncodingTimes.end(), 0) / static_cast<double>(vEncodingTimes.size());
+    auto minEncodingTimeMs = std::min_element(vEncodingTimes.begin(), vEncodingTimes.end());
+    auto maxEncodingTimeMs = std::max_element(vEncodingTimes.begin(), vEncodingTimes.end());
+
+    LOG(INFO) << "Read " << iCurrentFrame << " frames in " << sYuvFile << " (" << elapsed_ms.count() << " ms) Avg encoding time: " << dAverageEncodingTime << " ms min: " << *minEncodingTimeMs << " ms max: " << *maxEncodingTimeMs << "ms";
   }
   catch (boost::exception& e)
   {
