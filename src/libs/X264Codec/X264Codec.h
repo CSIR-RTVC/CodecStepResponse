@@ -17,6 +17,8 @@
 // "CSIR"
 // Copyright (c) 2016 CSIR.  All rights reserved.
 #pragma once
+#include <cstdint>
+#include <string>
 #include <x264.h>
 #include <rtp++/media/IVideoCodecTransform.h>
 #include <rtp++/util/Buffer.h>
@@ -77,4 +79,6 @@ private:
 
   uint32_t m_uiMode;
   double m_dCbrFactor;
+  std::string m_sPreset;
+  std::string m_sTune;
 };

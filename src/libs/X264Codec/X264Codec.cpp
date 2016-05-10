@@ -29,7 +29,9 @@ X264Codec::X264Codec()
     m_uiTargetBitrate(0),
     m_uiEncodingBufferSize(0),
     m_uiMode(0),
-    m_dCbrFactor(0.8)
+    m_dCbrFactor(0.8),
+    m_sPreset("ultrafast"),
+    m_sTune("zerolatency")
 {
 
 }
@@ -81,6 +83,38 @@ boost::system::error_code X264Codec::configure(const std::string& sName, const s
     assert(bDummy);
     return boost::system::error_code();
   }
+  else if (sName == "preset")
+  {
+    std::vector<std::string> presets = {"ultrafast","superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo"};
+    auto it = std::find_if(presets.begin(), presets.end(), [sValue](const std::string& sPreset){ return sValue == sPreset;});
+    if (it != presets.end())
+    {
+      m_sPreset = sValue;
+      VLOG(2) << "Preset set to " << m_sPreset;
+      return boost::system::error_code();
+    }
+    else
+    {
+      LOG(WARNING) << "Unknown x264 preset value";
+      return boost::system::error_code(boost::system::errc::not_supported, boost::system::generic_category());
+    }
+  }
+  else if (sName == "tune")
+  {
+    std::vector<std::string> tune = {"film", "animation", "grain", "stillimage", "psnr", "ssim", "fastdecode", "zerolatency"};
+    auto it = std::find_if(tune.begin(), tune.end(), [sValue](const std::string& sTune){ return sValue == sTune;});
+    if (it != tune.end())
+    {
+      m_sTune = sValue;
+      VLOG(2) << "Tune set to " << m_sTune;
+      return boost::system::error_code();
+    }
+    else
+    {
+      LOG(WARNING) << "Unknown x264 tune value";
+      return boost::system::error_code(boost::system::errc::not_supported, boost::system::generic_category());
+    }
+  }
   else if ((sName == "cbr_factor") || (sName == "cbrf"))
   {
     m_dCbrFactor = convert<double>(sValue, bDummy);
@@ -93,7 +127,7 @@ boost::system::error_code X264Codec::configure(const std::string& sName, const s
 
 void X264Codec::configureParams()
 {
-  x264_param_default_preset(&params, "ultrafast", "zerolatency");
+  x264_param_default_preset(&params, m_sPreset.c_str(), m_sTune.c_str());
 
   VLOG(2) << "Default level: " << params.i_level_idc;
   params.i_threads = 1;
