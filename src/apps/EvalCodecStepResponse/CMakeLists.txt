@@ -17,12 +17,31 @@ ${CodecStepResponseLink}
 
 ADD_EXECUTABLE(EvalCodecStepResponse ${CSR_SRCS} ${CSR_HEADERS})
 
-TARGET_LINK_LIBRARIES (
-EvalCodecStepResponse
+SET(CodecLibs
 ${CodecStepResponseLibs}
 OpenH264Codec
 X264Codec
+X265Codec
+)
+
+IF(BUILD_VPP)
+SET(CodecLibs
+${CodecLibs}
+VppH264Codec
+)
+#ELSE(BUILD_VPP)
+#SET(CodecLibs
+#${CodecStepResponseLibs}
+#OpenH264Codec
+#X264Codec
 #X265Codec
+#)
+ENDIF(BUILD_VPP)
+
+TARGET_LINK_LIBRARIES (
+EvalCodecStepResponse
+${CodecStepResponseLibs}
+${CodecLibs}
 )
 
 install(TARGETS EvalCodecStepResponse
