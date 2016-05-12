@@ -21,7 +21,6 @@ SET(CodecLibs
 ${CodecStepResponseLibs}
 OpenH264Codec
 X264Codec
-X265Codec
 )
 
 IF(BUILD_VPP)
@@ -29,14 +28,14 @@ SET(CodecLibs
 ${CodecLibs}
 VppH264Codec
 )
-#ELSE(BUILD_VPP)
-#SET(CodecLibs
-#${CodecStepResponseLibs}
-#OpenH264Codec
-#X264Codec
-#X265Codec
-#)
 ENDIF(BUILD_VPP)
+
+IF(ENABLE_X265)
+SET(CodecLibs
+${CodecLibs}
+X265Codec
+)
+ENDIF(ENABLE_X265)
 
 TARGET_LINK_LIBRARIES (
 EvalCodecStepResponse

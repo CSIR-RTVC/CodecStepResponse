@@ -44,7 +44,7 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 message("Detected 32-bit build")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-SET(BUILD_VPP true)
+SET(BUILD_VPP false)
 IF(BUILD_VPP)
 add_definitions(-DENABLE_VPP)
 ENDIF(BUILD_VPP)
@@ -136,6 +136,7 @@ $ENV{BOOST_LIB_DIR}
 ELSEIF(UNIX)
 SET(CodecStepResponseLink
 ${CodecStepResponse_SOURCE_DIR}/../lib
+${CodecStepResponse_SOURCE_DIR}/../bin
 ${CodecStepResponse_SOURCE_DIR}/../externals/rtp++/lib
 ${CodecStepResponse_SOURCE_DIR}/../externals/x264/
 ${CodecStepResponse_SOURCE_DIR}/../externals/openh264/
@@ -199,5 +200,3 @@ ADD_SUBDIRECTORY( apps )
 ADD_SUBDIRECTORY( libs )
 #ADD_SUBDIRECTORY( test )
 ADD_SUBDIRECTORY( tools )
-
-
