@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GLOG_v=2 GLOG_logtostderr=0 ../EvalCodecStepResponse -i <<sequence>> -f <<fps>> -w <<width>> -h <<height>> --video-codec <<codec_mt>> --vc-impl <<codec>> --vc-param "mode=<<mode>>" -o <<out>> -L logs -l EvalCodecStepResponse_<<out>> --rate-descriptor "<<rate_descriptor>>" --switch-mode <<switch_mode>> --rate-mode <<rate_mode>> <<additional_params>> 
+GLOG_v=7 GLOG_logtostderr=0 ../EvalCodecStepResponse -i <<sequence>> -f <<fps>> -w <<width>> -h <<height>> --video-codec <<codec_mt>> --vc-impl <<codec>> -o <<out>> -L logs -l EvalCodecStepResponse_<<out>> --rate-descriptor "<<rate_descriptor>>" --switch-mode <<switch_mode>> --rate-mode <<rate_mode>> <<additional_params>> 
 
 exit $?
 
