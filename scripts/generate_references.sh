@@ -41,7 +41,7 @@ do
         current_rate=${pair[0]}
         current_duration=${pair[1]}
         rd="$current_rate:-1"
-        id_string="$id"_"$current_rate"_"$current_duration"
+        id_string="$id"_"$current_rate"
         out="enc_$id_string"
 	script="gen_ref_$id_string.sh"
         yuv_file="$out".yuv
