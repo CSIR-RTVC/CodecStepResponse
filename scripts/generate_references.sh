@@ -7,9 +7,9 @@ cmd_template=EvalCodecStepResponse.template
 
 # iterate over all codecs, rates, and sequences
 
-while read name codec codec_mt file_ext mode decoder dec_if codec_parameters
+while read name codec codec_mt file_ext decoder dec_if codec_parameters
 do
-#  echo "Codec: $name $codec $codec_mt $mode $decoder"
+#  echo "Codec: $name $codec $codec_mt $decoder"
   if [[ $name = \#* ]]; then
     continue
   fi
@@ -27,7 +27,7 @@ do
           continue
         fi
 
-        echo "Codec: $name $codec $codec_mt $mode $decoder sequence : $sequence $width"x"$height@$fps rate_mode: $rate_mode switch_mode: $switch_mode rate_descriptor: $rate_descriptor"
+        echo "Codec: $name $codec $codec_mt $decoder sequence : $sequence $width"x"$height@$fps rate_mode: $rate_mode switch_mode: $switch_mode rate_descriptor: $rate_descriptor"
 
         esc_seq=$(echo $sequence | sed 's/\//\\\//g')
         fn=$(basename $sequence)
@@ -78,7 +78,7 @@ do
           sed -i -e "s/<<width>>/$width/g" $script1
           sed -i -e "s/<<height>>/$height/g" $script1
           sed -i -e "s/<<fps>>/$fps/g" $script1
-          sed -i -e "s/<<mode>>/$mode/g" $script1
+#          sed -i -e "s/<<mode>>/$mode/g" $script1
           sed -i -e "s/<<out>>/$out1/g" $script1
           sed -i -e "s/<<switch_mode>>/$switch_mode/g" $script1
           sed -i -e "s/<<rate_mode>>/$rate_mode/g" $script1
@@ -138,7 +138,7 @@ do
           sed -i -e "s/<<width>>/$width/g" $script2
           sed -i -e "s/<<height>>/$height/g" $script2
           sed -i -e "s/<<fps>>/$fps/g" $script2
-          sed -i -e "s/<<mode>>/$mode/g" $script2
+#          sed -i -e "s/<<mode>>/$mode/g" $script2
           sed -i -e "s/<<out>>/$out2/g" $script2
           sed -i -e "s/<<switch_mode>>/$switch_mode/g" $script2
           sed -i -e "s/<<rate_mode>>/$rate_mode/g" $script2
